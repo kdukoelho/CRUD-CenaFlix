@@ -1,4 +1,12 @@
-package Views;
+package views;
+
+import backend.Database;
+import backend.Movie;
+import java.awt.Color;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.text.MaskFormatter;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -14,8 +22,19 @@ public class MovieRegisterView extends javax.swing.JFrame {
     /**
      * Creates new form LoginView
      */
+    MaskFormatter mfdata;
+    Database db;
+    
     public MovieRegisterView() {
+        try{
+            mfdata = new MaskFormatter("##/##/####");
+        } catch (ParseException ex) {
+            System.out.println("MaskCreation error.");
+        }
+        db = new Database("funcionarios", "funcionarios");
+        this.setLocationRelativeTo(null);
         initComponents();
+        setComboBoxOptions();
     }
 
     /**
@@ -29,18 +48,30 @@ public class MovieRegisterView extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        message_label = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        category_comboBox = new javax.swing.JComboBox<>();
+        movReleaseDate_formattedTextField = new javax.swing.JFormattedTextField(mfdata);
+        movName_textField = new javax.swing.JTextField();
+        registerMovie_button = new javax.swing.JButton();
+        cleanFields_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CenaFlix - Movies Register");
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/images/movie-icon.png")).getImage());
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(41, 43, 45)), "CenaFlix", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Poppins", 0, 18), new java.awt.Color(0, 0, 0))); // NOI18N
         jPanel2.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+
+        message_label.setBackground(new java.awt.Color(255, 255, 255));
+        message_label.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        message_label.setForeground(new java.awt.Color(255, 51, 51));
 
         jLabel1.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
@@ -54,34 +85,78 @@ public class MovieRegisterView extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Categoria:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        category_comboBox.setEditable(true);
+
+        registerMovie_button.setBackground(new java.awt.Color(153, 153, 255));
+        registerMovie_button.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        registerMovie_button.setForeground(new java.awt.Color(0, 0, 0));
+        registerMovie_button.setText("Cadastrar");
+        registerMovie_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerMovie_buttonActionPerformed(evt);
+            }
+        });
+
+        cleanFields_button.setBackground(new java.awt.Color(153, 153, 255));
+        cleanFields_button.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        cleanFields_button.setForeground(new java.awt.Color(0, 0, 0));
+        cleanFields_button.setText("Limpar");
+        cleanFields_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanFields_buttonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3))
-                .addGap(18, 18, 18)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(movName_textField)
+                            .addComponent(movReleaseDate_formattedTextField)
+                            .addComponent(category_comboBox, 0, 142, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(registerMovie_button)
+                        .addGap(18, 18, 18)
+                        .addComponent(cleanFields_button)))
+                .addContainerGap(40, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(message_label)
+                .addGap(95, 95, 95))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(64, 64, 64)
-                .addComponent(jLabel1)
+                .addGap(36, 36, 36)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(movName_textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(movReleaseDate_formattedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(96, Short.MAX_VALUE))
+                    .addComponent(category_comboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36)
+                .addComponent(message_label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(registerMovie_button)
+                    .addComponent(cleanFields_button))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -115,6 +190,62 @@ public class MovieRegisterView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void registerMovie_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerMovie_buttonActionPerformed
+        if (movName_textField.getText().isBlank() || movReleaseDate_formattedTextField.getText().isBlank() || category_comboBox.getSelectedItem().toString().isBlank()) {
+            showWarningMsg();
+            
+        } else if (movReleaseDate_formattedTextField.getText().matches("^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$")) { 
+            Movie movie = new Movie(movName_textField.getText(), movReleaseDate_formattedTextField.getText(), category_comboBox.getSelectedItem().toString());
+            if (db.connect() && db.insertMovie(movie)){             
+                db.disconect();
+                category_comboBox.addItem(movie.getCategory());
+                cleanFields();
+                showSuccessMsg();
+            }
+            else {
+                System.out.println("Não foi possível estabelecer uma conexão com o banco de dados.");
+            }
+
+        }
+    }//GEN-LAST:event_registerMovie_buttonActionPerformed
+
+    private void cleanFields_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanFields_buttonActionPerformed
+        cleanFields();
+    }//GEN-LAST:event_cleanFields_buttonActionPerformed
+    
+    private void setComboBoxOptions(){
+        if (db.connect()){
+            List<Movie> movieList = db.getAllMovies();
+            List<String> movCategoriesList = new ArrayList();
+            if (movieList.size() >= 1){
+                for (Movie movie : movieList){                
+                    String movCategory = movie.getCategory();
+                    if (!movCategoriesList.contains(movCategory)) {
+                        movCategoriesList.add(movCategory);
+                        category_comboBox.addItem(movCategory);
+                    }
+                }
+            }
+        }
+        category_comboBox.setSelectedItem("");
+    }
+    
+    private void cleanFields(){
+        movName_textField.setText("");
+        movReleaseDate_formattedTextField.setText("");
+        category_comboBox.setSelectedItem("");
+    }
+    
+    private void showSuccessMsg(){
+        message_label.setForeground(new Color(0, 153, 0));
+        message_label.setText("Filme cadastrado.");
+    }
+    
+    private void showWarningMsg(){
+        message_label.setForeground(new Color(255,51,51));
+        message_label.setText("Preencha todos os campos");
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -152,11 +283,16 @@ public class MovieRegisterView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> category_comboBox;
+    private javax.swing.JButton cleanFields_button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel message_label;
+    private javax.swing.JTextField movName_textField;
+    private javax.swing.JFormattedTextField movReleaseDate_formattedTextField;
+    private javax.swing.JButton registerMovie_button;
     // End of variables declaration//GEN-END:variables
 }
